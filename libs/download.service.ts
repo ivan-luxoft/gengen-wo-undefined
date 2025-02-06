@@ -57,7 +57,7 @@ export class DownloadFileService extends BaseHttpService {
         link.download = filename;
         link.style.display = 'none';
         document.body.appendChild(link);
-        link.click();
+        link.dispatchEvent(new MouseEvent('click'));
         window.URL.revokeObjectURL(href);
         link.remove();
     }
