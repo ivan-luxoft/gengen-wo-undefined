@@ -14,6 +14,7 @@ import { FROM_DTO_METHOD, TO_DTO_METHOD } from '../ModelsGenerator';
 import { ARRAY_STRING, NULL_STRING, UNDEFINED_STRING } from '../utils/consts';
 import { TypeSerializer } from '../utils/TypeSerializer';
 import { PropertiesGenerator } from './PropertiesGenerator';
+import { publicFields } from '../utils/typeOrUndefined';
 
 export class ObjectGenerator {
     constructor(
@@ -45,7 +46,7 @@ export class ObjectGenerator {
                     scope: Scope.Public,
                     isStatic: true,
                     name: TO_DTO_METHOD,
-                    parameters: [{ name: 'model', type: z.name }],
+                    parameters: [{ name: 'model', type: publicFields(z.name) }],
                     returnType: z.dtoType,
                     statements: (x) => {
                         x.writeLine('return {');
