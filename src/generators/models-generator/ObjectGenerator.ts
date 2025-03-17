@@ -46,7 +46,7 @@ export class ObjectGenerator {
                     scope: Scope.Public,
                     isStatic: true,
                     name: TO_DTO_METHOD,
-                    parameters: [{ name: 'model', type: publicFields(z.name) }],
+                    parameters: [{ name: 'model', type: this.getToDtoArgumentType(z.name) }],
                     returnType: z.dtoType,
                     statements: (x) => {
                         x.writeLine('return {');
@@ -69,6 +69,10 @@ export class ObjectGenerator {
                 }
             ]
         }));
+    }
+
+    protected getToDtoArgumentType(originType: string): string {
+        return publicFields(originType);
     }
 
     private getObjectProperties(objectModel: ObjectModel, objects: ObjectModel[]): PropertyDeclarationStructure[] {

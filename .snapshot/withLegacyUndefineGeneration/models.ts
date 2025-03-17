@@ -34,16 +34,16 @@ interface ICategoryMotorsDtoBaseInterface {
 export type ICategoryMotorsDto = ICategoryMotorsDtoBaseInterface & ICategory;
 
 export interface IProduct {
-    categories: ICategoryUnion[];
+    categories: $types.TypeOrUndefined<ICategoryUnion[]>;
     category: $types.TypeOrUndefined<ICategoryUnion>;
     colors: $types.TypeOrUndefined<string[]>;
     expireDate: $types.TypeOrUndefined<string>;
     externalId: $types.TypeOrUndefinedNullable<string>;
     id: $types.TypeOrUndefined<string>;
-    modifyDates: string[];
+    modifyDates: $types.TypeOrUndefined<string[]>;
     name: $types.TypeOrUndefinedNullable<string>;
-    parentProduct: IProduct;
-    status: ProductStatus;
+    parentProduct: $types.TypeOrUndefinedNullable<IProduct>;
+    status: $types.TypeOrUndefined<ProductStatus>;
 }
 
 export interface IProductIdentityDTO {
@@ -111,7 +111,7 @@ export class Category {
         this.type = dto.type;
     }
 
-    public static toDTO(model: $types.PublicFields<Category>): ICategory {
+    public static toDTO(model: Partial<Category>): ICategory {
         return {
             name: model.name,
             type: model.type,
@@ -135,7 +135,7 @@ export class CategoryElectronicsDto {
         this.type = dto.type;
     }
 
-    public static toDTO(model: $types.PublicFields<CategoryElectronicsDto>): ICategoryElectronicsDto {
+    public static toDTO(model: Partial<CategoryElectronicsDto>): ICategoryElectronicsDto {
         return {
             syntheticTest: model.syntheticTest,
             name: model.name,
@@ -160,7 +160,7 @@ export class CategoryMotorsDto {
         this.type = dto.type;
     }
 
-    public static toDTO(model: $types.PublicFields<CategoryMotorsDto>): ICategoryMotorsDto {
+    public static toDTO(model: Partial<CategoryMotorsDto>): ICategoryMotorsDto {
         return {
             volume: model.volume,
             name: model.name,
@@ -182,34 +182,34 @@ export class Product {
     public id: $types.TypeOrUndefined<Guid>;
     public modifyDates: Date[];
     public name: $types.TypeOrUndefinedNullable<string>;
-    public parentProduct: Product;
-    public status: ProductStatus;
+    public parentProduct: $types.TypeOrUndefinedNullable<Product>;
+    public status: $types.TypeOrUndefined<ProductStatus>;
     private __product!: string;
 
     protected constructor(dto: IProduct) {
-        this.categories = dto.categories.map(x => CategoryUnionClass.fromDTO(x));
+        this.categories = dto.categories ? dto.categories.map(x => CategoryUnionClass.fromDTO(x)) : [];
         this.category = dto.category ? CategoryUnionClass.fromDTO(dto.category) : undefined;
         this.colors = dto.colors ? dto.colors : [];
         this.expireDate = toDateIn(dto.expireDate);
         this.externalId = dto.externalId ? new Guid(dto.externalId) : null;
         this.id = new Guid(dto.id);
-        this.modifyDates = dto.modifyDates.map(toDateIn);
+        this.modifyDates = dto.modifyDates ? dto.modifyDates.map(toDateIn) : [];
         this.name = dto.name;
-        this.parentProduct = Product.fromDTO(dto.parentProduct);
+        this.parentProduct = dto.parentProduct ? Product.fromDTO(dto.parentProduct) : undefined;
         this.status = dto.status;
     }
 
-    public static toDTO(model: $types.PublicFields<Product>): IProduct {
+    public static toDTO(model: Partial<Product>): IProduct {
         return {
-            categories: model.categories.map(x => CategoryUnionClass.toDTO(x)),
+            categories: model.categories ? model.categories.map(x => CategoryUnionClass.toDTO(x)) : undefined,
             category: model.category ? CategoryUnionClass.toDTO(model.category) : undefined,
             colors: model.colors,
             expireDate: toDateOut(model.expireDate),
             externalId: model.externalId ? model.externalId.toString() : null,
             id: model.id ? model.id.toString() : Guid.empty.toString(),
-            modifyDates: model.modifyDates.map(toDateOut),
+            modifyDates: model.modifyDates ? model.modifyDates.map(toDateOut) : undefined,
             name: model.name,
-            parentProduct: Product.toDTO(model.parentProduct),
+            parentProduct: model.parentProduct ? Product.toDTO(model.parentProduct) : undefined,
             status: model.status,
         };
     }

@@ -43,16 +43,17 @@ export class ModelMappingService {
             }
 
             if (this.typesGuard.isObject(schema)) {
+                const idFieldName = 'id';
                 if (this.isIdentity(schema)) {
                     identities.push({
                         name,
                         isNullable: false,
                         dtoType: this.nameService.getInterfaceName(name),
                         property: {
-                            ...this.typesService.getSimpleType(schema.properties['id'] as IOpenAPI3GuidSchema),
-                            isRequired: schema.required?.includes('id') ?? false,
+                            ...this.typesService.getSimpleType(schema.properties[idFieldName] as IOpenAPI3GuidSchema),
+                            isRequired: this.isRequiredField(schema, idFieldName),
                             isCollection: false,
-                            name: 'id',
+                            name: idFieldName,
                             isNullable: true
                         }
                     });
@@ -71,6 +72,10 @@ export class ModelMappingService {
             interfaces: this.getInterfaces(identities, objects).sort(sortBy((z) => z.name)),
             objects: objects.sort(sortBy((z) => z.name))
         };
+    }
+
+    protected isRequiredField(schema: IOpenAPI3ObjectSchema, fieldName: string): boolean {
+        return schema.required?.includes(fieldName) ?? false;
     }
 
     private toEnumModel(name: string, schema: IOpenAPI3EnumSchema): IEnumModel {
@@ -131,7 +136,7 @@ export class ModelMappingService {
 
         Object.entries(schema.properties)
             .filter(([name]) => !IGNORE_PROPERTIES.includes(name))
-            .forEach(([name, propertySchema]) => this.addProperty(model, name, propertySchema, schema.required?.includes(name) ?? false));
+            .forEach(([name, propertySchema]) => this.addProperty(model, name, propertySchema, this.isRequiredField(schema, name)));
 
         model.properties = model.properties.sort(sortBy((z) => z.name));
     }
